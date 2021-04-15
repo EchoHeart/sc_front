@@ -18,7 +18,10 @@
           </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>
-                <el-link @click="" icon="el-icon-user-solid">修改个人信息</el-link>
+                <el-link @click="drawer=true" icon="el-icon-document">我的资料</el-link>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <el-link @click="" icon="el-icon-edit">编辑资料</el-link>
               </el-dropdown-item>
               <el-dropdown-item>
                 <el-link @click="exit" icon="el-icon-switch-button">退出</el-link>
@@ -73,6 +76,37 @@
         </el-main>
       </el-container>
     </el-container>
+    <el-drawer
+        title="资料卡片"
+        :visible.sync="drawer"
+        append-to-body="true">
+      <el-card class="box-card"
+               style="
+                  box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px #0086b3;
+                  margin-left: 20px;
+                  margin-right: 20px;
+                  height: 90%">
+        <div>
+          <span >{{ msg_ID }}</span>
+        </div>
+        <el-divider></el-divider>
+        <div style="margin-top: 20px">
+          <span>{{ msg_name }}</span>
+        </div>
+        <el-divider></el-divider>
+        <div style="margin-top: 20px">
+          <span>{{ msg_telephone }}</span>
+        </div>
+        <el-divider></el-divider>
+        <div style="margin-top: 20px">
+          <span>{{ msg_school }}</span>
+        </div>
+        <el-divider></el-divider>
+        <div style="margin-top: 20px">
+          <span>{{ msg_identity }}</span>
+        </div>
+      </el-card>
+    </el-drawer>
   </body>
 </template>
 
@@ -80,6 +114,7 @@
 export default {
   data(){
     return{
+      drawer: false,
       Identity: '',
       disable_1: false,
       disable_2: false,
@@ -90,12 +125,17 @@ export default {
       disable_7: false,
       disable_8: false,
       disable_9: false,
-      disable_10: false
+      disable_10: false,
+      msg_ID: '用户ID：'+window.sessionStorage.getItem("id"),
+      msg_name: '用户名称：'+window.sessionStorage.getItem("name"),
+      msg_telephone: '电话号码：'+window.sessionStorage.getItem("telephone"),
+      msg_school: '所属学校：'+window.sessionStorage.getItem("school"),
+      msg_identity: '我的身份：'+window.sessionStorage.getItem("identity"),
     }
   },
   created() {
-    this.Identity = window.sessionStorage.getItem("Identity");
-    if(this.Identity == "admin"){
+    this.Identity = window.sessionStorage.getItem("identity");
+    if(this.Identity == "管理员"){
       this.disable_4 = true;
       this.disable_6 = true;
       this.disable_7 = true;
@@ -103,12 +143,12 @@ export default {
       this.disable_9 = true;
       this.disable_10 = true;
     }
-    if(this.Identity == "headmaster"){
+    if(this.Identity == "校长"){
       this.disable_5 = true;
       this.disable_6 = true;
       this.disable_7 = true;
     }
-    if(this.Identity == "teacher"){
+    if(this.Identity == "老师"){
       this.disable_1 = true;
       this.disable_2 = true;
       this.disable_3 = true;

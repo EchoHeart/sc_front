@@ -132,8 +132,13 @@ export default {
             password: this.loginForm.password
           });
           if(res.flag == "ok"){
-            window.sessionStorage.setItem("user",res.object);//存储admin对象
-            window.sessionStorage.setItem("Identity","admin");
+            //存储admin对象信息
+            window.sessionStorage.setItem("id",res.object.admin_id);
+            window.sessionStorage.setItem("name",res.object.admin_name);
+            window.sessionStorage.setItem("password",res.object.password);
+            window.sessionStorage.setItem("telephone",res.object.telephone);
+            window.sessionStorage.setItem("school","NULL")
+            window.sessionStorage.setItem("identity","管理员");
             this.$message.success("欢迎"+this.loginForm.username+"，登录成功！");
             await this.$router.push({path: "/Home"});
           }else{
@@ -156,8 +161,13 @@ export default {
             password: this.loginForm.password
           });
           if(res.flag == "ok"){
-            window.sessionStorage.setItem("user",res.object);//存储teacher对象
-            window.sessionStorage.setItem("Identity","teacher");
+            //存储teacher对象
+            window.sessionStorage.setItem("id",res.object.teacher_id);
+            window.sessionStorage.setItem("name",res.object.teacher_name);
+            window.sessionStorage.setItem("password",res.object.password);
+            window.sessionStorage.setItem("telephone",res.object.telephone);
+            window.sessionStorage.setItem("school",res.object.school_name);
+            window.sessionStorage.setItem("identity","老师");
             this.$message.success("欢迎"+this.loginForm.username+"，登录成功！");
             await this.$router.push({path: "/Home"});
           }else{
@@ -180,8 +190,13 @@ export default {
             password: this.loginForm.password
           });
           if(res.flag == "ok"){
-            window.sessionStorage.setItem("user",res.object);//存储headmaster对象
-            window.sessionStorage.setItem("Identity","headmaster");
+            //存储headmaster对象
+            window.sessionStorage.setItem("id",res.object.headmaster_id);
+            window.sessionStorage.setItem("name",res.object.headmaster_name);
+            window.sessionStorage.setItem("password",res.object.password);
+            window.sessionStorage.setItem("telephone",res.object.telephone);
+            window.sessionStorage.setItem("school",res.object.school_name);
+            window.sessionStorage.setItem("identity","校长");
             this.$message.success("欢迎"+this.loginForm.username+"，登录成功！");
             await this.$router.push({path: "/Home"});
           }else{
@@ -209,10 +224,8 @@ export default {
             telephone: this.registerForm_headmaster.headmaster_telephone,
             school_name: this.registerForm_headmaster.headmaster_school
           });
-          if(res.flag == "ok"){
-            console.log(res.object);
+          if(res == "ok"){
             this.$message.success("注册成功！");
-            await this.$router.push({path: "/"});
           }else{
             this.$message.error("注册失败");
           }
