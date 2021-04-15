@@ -1,8 +1,20 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+//引入iconfont
+import './assets/iconfont/iconfont.css'
+//引入axios
+import axios from 'axios'
 
 Vue.config.productionTip = false
+Vue.use(ElementUI)
+//挂载axios
+Vue.prototype.$http = axios
+
+//设置访问根路径
+axios.defaults.baseURL = "http://localhost:9000"
 
 new Vue({
   router,
