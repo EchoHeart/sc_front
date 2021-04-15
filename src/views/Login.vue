@@ -203,7 +203,19 @@ export default {
       this.$refs.registerForm_headmaster.validate(async (valid) =>{
         if(valid){
           //注册
-
+          const {data: res} = await this.$http.post("headmasterRegister", {
+            headmaster_name: this.registerForm_headmaster.headmaster_name,
+            password: this.registerForm_headmaster.headmaster_password_certain,
+            telephone: this.registerForm_headmaster.headmaster_telephone,
+            school_name: this.registerForm_headmaster.headmaster_school
+          });
+          if(res.flag == "ok"){
+            console.log(res.object);
+            this.$message.success("注册成功！");
+            await this.$router.push({path: "/"});
+          }else{
+            this.$message.error("注册失败");
+          }
           this.cancel_headmaster();
         }else{
           this.$message.error('个人信息需填写完整！');
