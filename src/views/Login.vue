@@ -24,35 +24,40 @@
       <!--注册-->
       <el-form-item align="center">
         <el-link :underline="false" icon="iconfont icon-jiaolian1" type="primary"
-                 style="margin-right: 30px" @click="Visible=true">老师注册</el-link>
+                 style="margin-right: 30px" @click="">老师注册</el-link>
         <el-link :underline="false" icon="iconfont icon-Boss-laoban-1" type="primary"
-                 @click="Visible=true">校长注册</el-link>
+                 @click="visible_headmaster=true">校长注册</el-link>
       </el-form-item>
       <!--密码找回-->
       <el-link :underline="false" href="" icon="iconfont icon-wangjimima" type="warning"
                style="margin-left: 50%; transform: translate(-50%)">忘记密码</el-link>
     </el-form>
-    <!--注册表单-->
-    <el-dialog title="用户注册" :visible.sync="Visible" :append-to-body="true">
-      <el-form :model="registerForm" ref="registerForm" :rules="rules_register">
-        <el-form-item label="用户名称" :label-width="formLabelWidth" prop="register_username">
-          <el-input v-model="registerForm.register_username" autocomplete="off"></el-input>
+    <!--校长注册表单-->
+    <el-dialog title="校长注册" :visible.sync="visible_headmaster" :append-to-body="true">
+      <el-form :model="registerForm_headmaster" ref="registerForm_headmaster" :rules="rules_register_headmaster">
+        <el-form-item label="您的姓名" :label-width="formLabelWidth" prop="headmaster_name">
+          <el-input v-model="registerForm_headmaster.headmaster_name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="用户密码" :label-width="formLabelWidth" prop="register_password">
-          <el-input type="password" v-model="registerForm.register_password" autocomplete="off"></el-input>
+        <el-form-item label="设置密码" :label-width="formLabelWidth" prop="headmaster_password">
+          <el-input type="password" v-model="registerForm_headmaster.headmaster_password" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="电话号码" :label-width="formLabelWidth" prop="register_telephone">
-          <el-input v-model="registerForm.register_telephone" autocomplete="off"></el-input>
+        <el-form-item label="确认密码" :label-width="formLabelWidth" prop="headmaster_password_certain">
+          <el-input type="password" v-model="registerForm_headmaster.headmaster_password_certain" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="所属学校" :label-width="formLabelWidth" prop="register_school">
-          <el-input v-model="registerForm.register_school" autocomplete="off"></el-input>
+        <el-form-item label="电话号码" :label-width="formLabelWidth" prop="headmaster_telephone">
+          <el-input v-model="registerForm_headmaster.headmaster_telephone" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="所属学校" :label-width="formLabelWidth" prop="headmaster_school">
+          <el-input v-model="registerForm_headmaster.headmaster_school" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="register">注 册</el-button>
+        <el-button @click="cancel_headmaster">取 消</el-button>
+        <el-button type="primary" @click="register_headmaster">注 册</el-button>
       </div>
     </el-dialog>
+    <!--老师注册表单-->
+
   </div>
   </body>
 </template>
@@ -61,21 +66,32 @@
 export default {
   name: "Login",
   data(){
+    //校长注册检验密码一致
+    let check_headmaster = (rule,value,callback) =>{
+      if(value != this.registerForm_headmaster.headmaster_password)
+        callback(new Error("两次输入密码不一致"));
+      else
+        callback();
+    }
     return{
-      Visible: false,
+      //校长注册表单是否可见
+      visible_headmaster: false,
       formLabelWidth: '100px',
+      //登录表单
       loginForm:{
         username:'',
         password:''
       },
-      registerForm: {
-        register_username: '',
-        register_password: '',
-        register_telephone: '',
-        register_school: ''
+      //校长注册表单
+      registerForm_headmaster: {
+        headmaster_name: '',
+        headmaster_password: '',
+        headmaster_password_certain: '',
+        headmaster_telephone: '',
+        headmaster_school: ''
       },
       /**
-       * 表单验证
+       * 登录表单验证规则
        * required: 是否为必填项
        * message: 提示信息
        * trigger: 触发器
@@ -86,15 +102,23 @@ export default {
         //密码不能为空
         password: [{required:true, message:'请输入密码', trigger:'blur'}]
       },
-      rules_register:{
+      /**
+       * 校长注册表单验证规则
+       */
+      rules_register_headmaster:{
         //用户名称不能为空
-        register_username: [{required:true, message:'请输入用户名', trigger:'blur'}],
+        headmaster_name: [{required:true, message:'姓名不能为空', trigger:'blur'}],
         //用户密码不能为空
-        register_password: [{required:true, message:'请输入密码', trigger:'blur'}],
+        headmaster_password: [{required:true, message:'密码不能为空', trigger:'blur'}],
+        //确认密码必须相一致
+        headmaster_password_certain: [
+            {required:true, message:'确认密码不能为空', trigger:'blur'},
+            {validator:check_headmaster, trigger:'blur'}
+        ],
         //电话号码不能为空
-        register_telephone: [{required:true, message:'请输入密码', trigger:'blur'}],
+        headmaster_telephone: [{required:true, message:'电话号码不能为空', trigger:'blur'}],
         //所属学校不能为空
-        register_school: [{required:true, message:'请输入密码', trigger:'blur'}],
+        headmaster_school: [{required:true, message:'学校不能为空', trigger:'blur'}],
       }
     }
   },
@@ -171,22 +195,21 @@ export default {
         }
       });
     },
-    cancel(){
-      this.Visible = false;
-      this.$refs.registerForm.resetFields();
+    cancel_headmaster(){
+      this.visible_headmaster = false;
+      this.$refs.registerForm_headmaster.resetFields();
     },
-    register(){
-      this.$refs.registerForm.validate(async (valid) =>{
+    register_headmaster(){
+      this.$refs.registerForm_headmaster.validate(async (valid) =>{
         if(valid){
           //注册
 
-          this.Visible = false;
-          this.$refs.registerForm.resetFields();
+          this.cancel_headmaster();
         }else{
           this.$message.error('个人信息需填写完整！');
         }
       })
-    }
+    },
   }
 }
 </script>
