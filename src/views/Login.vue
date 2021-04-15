@@ -110,7 +110,7 @@ export default {
           if(res.flag == "ok"){
             window.sessionStorage.setItem("user",res.object);//存储admin对象
             window.sessionStorage.setItem("Identity","admin");
-            this.$message.success("登录成功");
+            this.$message.success("欢迎"+this.loginForm.username+"，登录成功！");
             await this.$router.push({path: "/Home"});
           }else{
             this.$message.error("用户名或密码错误");
@@ -134,7 +134,7 @@ export default {
           if(res.flag == "ok"){
             window.sessionStorage.setItem("user",res.object);//存储teacher对象
             window.sessionStorage.setItem("Identity","teacher");
-            this.$message.success("登录成功");
+            this.$message.success("欢迎"+this.loginForm.username+"，登录成功！");
             await this.$router.push({path: "/Home"});
           }else{
             this.$message.error("用户名或密码错误");
@@ -158,7 +158,7 @@ export default {
           if(res.flag == "ok"){
             window.sessionStorage.setItem("user",res.object);//存储headmaster对象
             window.sessionStorage.setItem("Identity","headmaster");
-            this.$message.success("登录成功");
+            this.$message.success("欢迎"+this.loginForm.username+"，登录成功！");
             await this.$router.push({path: "/Home"});
           }else{
             this.$message.error("用户名或密码错误");
