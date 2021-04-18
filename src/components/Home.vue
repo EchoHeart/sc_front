@@ -30,21 +30,24 @@
           </el-dropdown>
         </div>
       </el-header>
+
       <el-container>
         <!--侧边栏-->
         <el-aside width="180px">
-          <el-menu background-color="#0086b3" text-color="#fff" active-text-color="#ffd04b" style="width: 180px">
+          <el-menu background-color="#0086b3" text-color="#fff"
+                   active-text-color="#ffd04b" style="width: 180px"
+                   :router= true :default-active="activePath">
             <el-submenu index="1">
               <template slot="title">
                 <i class="el-icon-setting"></i>
                 <span>信息管理</span>
               </template>
-              <el-menu-item index="1-1" class="el-icon-user" v-bind:disabled="this.disable_1" @click="userManage">账户管理</el-menu-item>
+              <el-menu-item index="UserManage" class="el-icon-user" v-bind:disabled="this.disable_1" @click="savePath('UserManage')">账户管理</el-menu-item>
               <el-menu-item index="1-2" class="el-icon-school" v-bind:disabled="this.disable_2" @click="schoolManage">学校管理</el-menu-item>
               <el-menu-item index="1-3" class="el-icon-check" v-bind:disabled="this.disable_3" @click="check">资质审核</el-menu-item>
               <el-submenu index="1-4">
                 <template slot="title">
-                  <i class="el-icon-food" style="margin-left: -6px"></i>
+                  <i class="el-icon-food" style="margin-left: -6px; color: white"></i>
                   <span style="margin-left: -8px">套餐管理</span>
                 </template>
                 <el-menu-item index="1-4-1" v-bind:disabled="this.disable_4" class="el-icon-shopping-cart-2">套餐购买</el-menu-item>
@@ -70,16 +73,19 @@
             </el-submenu>
           </el-menu>
         </el-aside>
+
         <!--主体-->
         <el-main>
-          欢迎使用本系统
+          <router-view></router-view>
         </el-main>
       </el-container>
     </el-container>
+
+    <!--用户资料查看-->
     <el-drawer
         title="资料卡片"
         :visible.sync="drawer"
-        append-to-body="true">
+        :append-to-body=true>
       <el-card class="box-card"
                style="
                   box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px #0086b3;
@@ -114,6 +120,7 @@
 export default {
   data(){
     return{
+      activePath: '/Welcome',
       drawer: false,
       Identity: '',
       disable_1: false,
@@ -134,6 +141,7 @@ export default {
     }
   },
   created() {
+    this.activePath = window.sessionStorage.getItem("activePath");
     this.Identity = window.sessionStorage.getItem("identity");
     if(this.Identity == "管理员"){
       this.disable_4 = true;
@@ -167,8 +175,10 @@ export default {
       // 返回登录页面
       this.$router.push("/");
     },
-    userManage(){
-
+    //保存路径
+    savePath(path){
+      window.sessionStorage.setItem("activePath",path);
+      this.activePath = path;
     },
     schoolManage(){
 

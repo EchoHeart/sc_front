@@ -32,6 +32,7 @@
       <el-link :underline="false" href="" icon="iconfont icon-wangjimima" type="warning"
                style="margin-left: 50%; transform: translate(-50%)">忘记密码</el-link>
     </el-form>
+
     <!--校长注册表单-->
     <el-dialog title="校长注册" :visible.sync="visible_headmaster" :append-to-body="true">
       <el-form :model="registerForm_headmaster" ref="registerForm_headmaster" :rules="rules_register_headmaster">
@@ -52,10 +53,11 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel_headmaster">取 消</el-button>
-        <el-button type="primary" @click="register_headmaster">注 册</el-button>
+        <el-button @click="headmasterCancel">取 消</el-button>
+        <el-button type="primary" @click="headmasterRegister">注 册</el-button>
       </div>
     </el-dialog>
+
     <!--老师注册表单-->
 
   </div>
@@ -73,6 +75,7 @@ export default {
       else
         callback();
     }
+
     return{
       //校长注册表单是否可见
       visible_headmaster: false,
@@ -110,7 +113,7 @@ export default {
         headmaster_name: [{required:true, message:'姓名不能为空', trigger:'blur'}],
         //用户密码不能为空
         headmaster_password: [{required:true, message:'密码不能为空', trigger:'blur'}],
-        //确认密码必须相一致
+        //确认密码不能为空且必须一致
         headmaster_password_certain: [
             {required:true, message:'确认密码不能为空', trigger:'blur'},
             {validator:check_headmaster, trigger:'blur'}
@@ -122,7 +125,9 @@ export default {
       }
     }
   },
+
   methods:{
+    //管理员登录
     adminLogin(){
       //valid用来判断表单规则是否通过
       this.$refs.loginForm.validate(async (valid) => {
@@ -152,6 +157,8 @@ export default {
         }
       });
     },
+
+    //老师登录
     teacherLogin(){
       //valid用来判断表单规则是否通过
       this.$refs.loginForm.validate(async (valid) => {
@@ -160,7 +167,7 @@ export default {
             teacher_name: this.loginForm.username,
             password: this.loginForm.password
           });
-          if(res.flag == "ok"){
+          if(res.flag == "ok" && res.object.state == 1){
             //存储teacher对象
             window.sessionStorage.setItem("id",res.object.teacher_id);
             window.sessionStorage.setItem("name",res.object.teacher_name);
@@ -170,8 +177,14 @@ export default {
             window.sessionStorage.setItem("identity","老师");
             this.$message.success("欢迎"+this.loginForm.username+"，登录成功！");
             await this.$router.push({path: "/Home"});
-          }else{
-            this.$message.error("用户名或密码错误");
+          }
+          if(res.flag != "ok"){
+            this.$message.error("用户名或密码错误！");
+            //重置表单
+            this.$refs.loginForm.resetFields();
+          }
+          if(res.object.state != 1){
+            this.$message.error("管理员审核未通过，不予登录！");
             //重置表单
             this.$refs.loginForm.resetFields();
           }
@@ -181,6 +194,8 @@ export default {
         }
       });
     },
+
+    //校长登录
     headmasterLogin(){
       //valid用来判断表单规则是否通过
       this.$refs.loginForm.validate(async (valid) => {
@@ -189,7 +204,7 @@ export default {
             headmaster_name: this.loginForm.username,
             password: this.loginForm.password
           });
-          if(res.flag == "ok"){
+          if(res.flag == "ok" && res.object.state == 1){
             //存储headmaster对象
             window.sessionStorage.setItem("id",res.object.headmaster_id);
             window.sessionStorage.setItem("name",res.object.headmaster_name);
@@ -199,8 +214,14 @@ export default {
             window.sessionStorage.setItem("identity","校长");
             this.$message.success("欢迎"+this.loginForm.username+"，登录成功！");
             await this.$router.push({path: "/Home"});
-          }else{
-            this.$message.error("用户名或密码错误");
+          }
+          if(res.flag != "ok"){
+            this.$message.error("用户名或密码错误！");
+            //重置表单
+            this.$refs.loginForm.resetFields();
+          }
+          if(res.object.state != 1){
+            this.$message.error("管理员审核未通过，不予登录！");
             //重置表单
             this.$refs.loginForm.resetFields();
           }
@@ -210,11 +231,15 @@ export default {
         }
       });
     },
-    cancel_headmaster(){
+
+    //校长注册表单关闭
+    headmasterCancel(){
       this.visible_headmaster = false;
       this.$refs.registerForm_headmaster.resetFields();
     },
-    register_headmaster(){
+
+    //校长注册
+    headmasterRegister(){
       this.$refs.registerForm_headmaster.validate(async (valid) =>{
         if(valid){
           //注册
@@ -227,9 +252,9 @@ export default {
           if(res == "ok"){
             this.$message.success("注册成功！");
           }else{
-            this.$message.error("注册失败");
+            this.$message.error("注册失败！");
           }
-          this.cancel_headmaster();
+          this.headmasterCancel();
         }else{
           this.$message.error('个人信息需填写完整！');
         }
