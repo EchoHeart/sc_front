@@ -21,7 +21,7 @@
                 <el-link @click="drawer=true" icon="el-icon-document">我的资料</el-link>
               </el-dropdown-item>
               <el-dropdown-item>
-                <el-link @click="" icon="el-icon-edit">编辑资料</el-link>
+                <el-link @click="dialog=true" icon="el-icon-edit">修改密码</el-link>
               </el-dropdown-item>
               <el-dropdown-item>
                 <el-link @click="exit" icon="el-icon-switch-button">退出</el-link>
@@ -93,26 +93,67 @@
                   margin-right: 20px;
                   height: 90%">
         <div>
-          <span >{{ msg_ID }}</span>
+          用户 I D：
+          <el-input style="width: 130px" v-model="msg_ID" disabled></el-input>
         </div>
         <el-divider></el-divider>
         <div style="margin-top: 20px">
-          <span>{{ msg_name }}</span>
+          用户名称：
+          <el-input style="width: 130px" v-model="msg_name" disabled></el-input>
         </div>
         <el-divider></el-divider>
         <div style="margin-top: 20px">
-          <span>{{ msg_telephone }}</span>
+          电话号码：
+          <el-input style="width: 130px" v-model="msg_telephone" :disabled="is_disable"></el-input>
+          <el-button type="text" style="margin-left: 10px" @click="edit">编辑</el-button>
+          <el-button type="text" style="margin-left: 10px" @click="change_telephone" :disabled="is_disable">保存</el-button>
         </div>
         <el-divider></el-divider>
         <div style="margin-top: 20px">
-          <span>{{ msg_school }}</span>
+          所属学校：
+          <el-input style="width: 130px" v-model="msg_school" disabled></el-input>
         </div>
         <el-divider></el-divider>
         <div style="margin-top: 20px">
-          <span>{{ msg_identity }}</span>
+          我的身份：
+          <el-input style="width: 130px" v-model="msg_identity" disabled></el-input>
         </div>
       </el-card>
     </el-drawer>
+
+    <!--用户修改密码-->
+    <el-dialog
+        title="修改密码"
+        :visible.sync="dialog"
+        :append-to-body="true"
+        style="width: 800px; margin-left: 21%; margin-top: 4%"
+        @closed="handleClose">
+      <el-form :model="change_password_form" ref="change_password_form">
+        <el-form-item label="原密码" prop="old_password">
+          <el-input
+              type="password"
+              autocomplete="off"
+              style="width: 300px"
+              v-model="change_password_form.old_password">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="新密码" prop="new_password">
+          <el-input
+              type="password"
+              autocomplete="off"
+              style="width: 300px"
+              v-model="change_password_form.new_password"
+              :disabled="!pass">
+          </el-input>
+        </el-form-item>
+        <el-form-item align="right">
+          <el-tooltip effect="dark" content="请先验证原密码" placement="bottom">
+            <el-button type="primary" @click="check">验证</el-button>
+          </el-tooltip>
+          <el-button type="primary" :disabled="!pass" @click="change_password">修改</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </body>
 </template>
 
@@ -120,8 +161,15 @@
 export default {
   data(){
     return{
-      activePath: '/Welcome',
+      //修改密码表单是否可见
+      dialog: false,
+      //用户资料卡片是否可见
       drawer: false,
+      //是否可修改电话号码
+      is_disable: true,
+      //原密码输入是否通过
+      pass: false,
+      activePath: '/Welcome',
       Identity: '',
       disable_1: false,
       disable_2: false,
@@ -133,11 +181,15 @@ export default {
       disable_8: false,
       disable_9: false,
       disable_10: false,
-      msg_ID: '用户ID：'+window.sessionStorage.getItem("id"),
-      msg_name: '用户名称：'+window.sessionStorage.getItem("name"),
-      msg_telephone: '电话号码：'+window.sessionStorage.getItem("telephone"),
-      msg_school: '所属学校：'+window.sessionStorage.getItem("school"),
-      msg_identity: '我的身份：'+window.sessionStorage.getItem("identity"),
+      msg_ID: window.sessionStorage.getItem("id"),
+      msg_name: window.sessionStorage.getItem("name"),
+      msg_telephone: window.sessionStorage.getItem("telephone"),
+      msg_school: window.sessionStorage.getItem("school"),
+      msg_identity: window.sessionStorage.getItem("identity"),
+      change_password_form: {
+        old_password: '',
+        new_password: ''
+      },
     }
   },
   created() {
@@ -175,17 +227,75 @@ export default {
       // 返回登录页面
       this.$router.push("/");
     },
+
+    //设置电话号码可编辑
+    edit(){
+      this.is_disable = false;
+    },
+
+    //修改电话号码
+    async change_telephone() {
+      const {data: res} = await this.$http.post("editTelephone", {
+        name: this.msg_name,
+        telephone: this.msg_telephone,
+        identity: this.msg_identity
+      });
+      if (res == "ok") {
+        this.$message.success("编辑成功！");
+        window.sessionStorage.setItem("telephone",this.msg_telephone);
+        this.is_disable = true;
+      }
+      else{
+        this.$message.error("编辑失败！");
+        this.msg_telephone = window.sessionStorage.getItem("telephone");
+        this.is_disable = true;
+      }
+    },
+
+    //检查原密码输入是否准确
+    check(){
+      if(this.change_password_form.old_password == window.sessionStorage.getItem("password")){
+        this.pass = true;
+        this.$message.success("验证通过！");
+      }
+      else
+        this.$message.error("验证失败！");
+    },
+
+    //修改密码
+    async change_password() {
+      const {data: res} = await this.$http.post("editPassword", {
+        name: this.msg_name,
+        password: this.change_password_form.new_password,
+        identity: this.msg_identity
+      });
+      if (res == "ok") {
+        this.$message.success("修改成功！");
+        window.sessionStorage.setItem("password",this.change_password_form.new_password);
+        this.pass = false;
+      }
+      else{
+        this.$message.error("修改失败！");
+        this.change_password_form.new_password = '';
+        this.pass = false;
+      }
+    },
+
+    //修改密码对话框关闭后的操作——清空表单
+    handleClose(){
+      this.$refs.change_password_form.resetFields();
+    },
+
     //保存路径
     savePath(path){
       window.sessionStorage.setItem("activePath",path);
       this.activePath = path;
     },
+
+
     schoolManage(){
 
     },
-    check(){
-
-    }
   }
 }
 </script>
