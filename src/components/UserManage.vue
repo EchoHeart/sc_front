@@ -45,7 +45,7 @@
             @size-change="headmasterSizeChange"
             @current-change="headmasterCurrentChange"
             :current-page="this.queryInfo_headmaster.pageNum"
-            :page-sizes="[2, 4, 6, 8]"
+            :page-sizes="[4, 6, 8, 10]"
             :page-size="this.queryInfo_headmaster.pageSize"
             layout="total, sizes, prev, pager, next, jumper"
             :total="this.total_headmaster">
@@ -91,7 +91,7 @@
             @size-change="teacherSizeChange"
             @current-change="teacherCurrentChange"
             :current-page="this.queryInfo_teacher.pageNum"
-            :page-sizes="[2, 4, 6, 8]"
+            :page-sizes="[4, 6, 8, 10]"
             :page-size="this.queryInfo_teacher.pageSize"
             layout="total, sizes, prev, pager, next, jumper"
             :total="this.total_teacher">
@@ -119,13 +119,13 @@ export default {
       queryInfo_headmaster: {
         query: '', //查询条件
         pageNum: 1, //当前页
-        pageSize: 2 //每页最大数
+        pageSize: 4 //每页最大数
       },
       //老师查询信息
       queryInfo_teacher: {
         query: '', //查询条件
         pageNum: 1, //当前页
-        pageSize: 2 //每页最大数
+        pageSize: 4 //每页最大数
       },
       headmasterList: [],
       teacherList: [],

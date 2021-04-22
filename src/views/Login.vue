@@ -30,7 +30,7 @@
       </el-form-item>
       <!--密码找回-->
       <el-link :underline="false" icon="iconfont icon-wangjimima" type="warning"
-               style="margin-left: 50%; transform: translate(-50%)" @click="getSchool">忘记密码</el-link>
+               style="margin-left: 50%; transform: translate(-50%)" @click="">忘记密码</el-link>
     </el-form>
 
     <!--校长注册表单-->
@@ -74,8 +74,12 @@
           <el-input v-model="registerForm_teacher.teacher_telephone" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="所属学校" :label-width="formLabelWidth" prop="teacher_school">
-          <el-select v-model="registerForm_teacher.teacher_school" size="mini" placeholder="请选择学校...">
-            <el-option v-for="item in this.schoolData" :key="item.key" :label="item.label" :value="item.label"></el-option>
+          <el-select v-model="registerForm_teacher.teacher_school" size="big" placeholder="请选择学校">
+            <el-option
+                v-for="item in this.schoolData"
+                :key="item.key"
+                :label="item.label"
+                :value="item.label"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -117,6 +121,7 @@ export default {
       formLabelWidth: '100px',
       schoolList: [],
       schoolData: [],
+
       //登录表单
       loginForm:{
         username:'',
@@ -192,10 +197,6 @@ export default {
       }
     }
   },
-
-  // mounted(){
-  //   this.getSchool();
-  // },
 
   methods:{
     //管理员登录
@@ -311,6 +312,8 @@ export default {
 
     //老师注册表单关闭
     teacherCancel(){
+      this.schoolList=[];
+      this.schoolData=[];
       this.visible_teacher = false;
       this.$refs.registerForm_teacher.resetFields();
     },

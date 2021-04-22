@@ -44,7 +44,7 @@
               </template>
               <el-menu-item index="UserManage" class="el-icon-user" v-bind:disabled="this.disable_1" @click="savePath('UserManage')">账户管理</el-menu-item>
               <el-menu-item index="1-2" class="el-icon-school" v-bind:disabled="this.disable_2" @click="schoolManage">学校管理</el-menu-item>
-              <el-menu-item index="1-3" class="el-icon-check" v-bind:disabled="this.disable_3" @click="check">资质审核</el-menu-item>
+              <el-menu-item index="QualificationCheck" class="el-icon-check" v-bind:disabled="this.disable_3" @click="savePath('QualificationCheck')">资质审核</el-menu-item>
               <el-submenu index="1-4">
                 <template slot="title">
                   <i class="el-icon-food" style="margin-left: -6px; color: white"></i>
@@ -154,6 +154,7 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
   </body>
 </template>
 
@@ -204,6 +205,7 @@ export default {
       this.disable_10 = true;
     }
     if(this.Identity == "校长"){
+      this.disable_3 = true;
       this.disable_5 = true;
       this.disable_6 = true;
       this.disable_7 = true;
