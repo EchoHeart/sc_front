@@ -24,13 +24,13 @@
       <!--注册-->
       <el-form-item align="center">
         <el-link :underline="false" icon="iconfont icon-jiaolian1" type="primary"
-                 style="margin-right: 30px" @click="">老师注册</el-link>
+                 style="margin-right: 30px" @click="getSchool">老师注册</el-link>
         <el-link :underline="false" icon="iconfont icon-Boss-laoban-1" type="primary"
                  @click="visible_headmaster=true">校长注册</el-link>
       </el-form-item>
       <!--密码找回-->
-      <el-link :underline="false" href="" icon="iconfont icon-wangjimima" type="warning"
-               style="margin-left: 50%; transform: translate(-50%)">忘记密码</el-link>
+      <el-link :underline="false" icon="iconfont icon-wangjimima" type="warning"
+               style="margin-left: 50%; transform: translate(-50%)" @click="getSchool">忘记密码</el-link>
     </el-form>
 
     <!--校长注册表单-->
@@ -59,6 +59,31 @@
     </el-dialog>
 
     <!--老师注册表单-->
+    <el-dialog title="老师注册" :visible.sync="visible_teacher" :append-to-body="true">
+      <el-form :model="registerForm_teacher" ref="registerForm_teacher" :rules="rules_register_teacher">
+        <el-form-item label="您的姓名" :label-width="formLabelWidth" prop="teacher_name">
+          <el-input v-model="registerForm_teacher.teacher_name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="设置密码" :label-width="formLabelWidth" prop="teacher_password">
+          <el-input type="password" v-model="registerForm_teacher.teacher_password" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" :label-width="formLabelWidth" prop="teacher_password_certain">
+          <el-input type="password" v-model="registerForm_teacher.teacher_password_certain" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话号码" :label-width="formLabelWidth" prop="teacher_telephone">
+          <el-input v-model="registerForm_teacher.teacher_telephone" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="所属学校" :label-width="formLabelWidth" prop="teacher_school">
+          <el-select v-model="registerForm_teacher.teacher_school" size="mini" placeholder="请选择学校...">
+            <el-option v-for="item in this.schoolData" :key="item.key" :label="item.label" :value="item.label"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="teacherCancel">取 消</el-button>
+        <el-button type="primary" @click="teacherRegister">注 册</el-button>
+      </div>
+    </el-dialog>
 
   </div>
   </body>
@@ -76,15 +101,28 @@ export default {
         callback();
     }
 
+    //老师注册检验密码一致
+    let check_teacher = (rule,value,callback) =>{
+      if(value != this.registerForm_teacher.teacher_password)
+        callback(new Error("两次输入密码不一致"));
+      else
+        callback();
+    }
+
     return{
       //校长注册表单是否可见
       visible_headmaster: false,
+      //老师注册表单是否可见
+      visible_teacher: false,
       formLabelWidth: '100px',
+      schoolList: [],
+      schoolData: [],
       //登录表单
       loginForm:{
         username:'',
         password:''
       },
+
       //校长注册表单
       registerForm_headmaster: {
         headmaster_name: '',
@@ -93,6 +131,16 @@ export default {
         headmaster_telephone: '',
         headmaster_school: ''
       },
+
+      //老师注册表单
+      registerForm_teacher: {
+        teacher_name: '',
+        teacher_password: '',
+        teacher_password_certain: '',
+        teacher_telephone: '',
+        teacher_school: '',
+      },
+
       /**
        * 登录表单验证规则
        * required: 是否为必填项
@@ -122,9 +170,32 @@ export default {
         headmaster_telephone: [{required:true, message:'电话号码不能为空', trigger:'blur'}],
         //所属学校不能为空
         headmaster_school: [{required:true, message:'学校不能为空', trigger:'blur'}],
+      },
+
+      /**
+       * 老师注册表单验证规则
+       */
+      rules_register_teacher:{
+        //用户名称不能为空
+        teacher_name: [{required:true, message:'姓名不能为空', trigger:'blur'}],
+        //用户密码不能为空
+        teacher_password: [{required:true, message:'密码不能为空', trigger:'blur'}],
+        //确认密码不能为空且必须一致
+        teacher_password_certain: [
+          {required:true, message:'确认密码不能为空', trigger:'blur'},
+          {validator:check_teacher, trigger:'blur'}
+        ],
+        //电话号码不能为空
+        teacher_telephone: [{required:true, message:'电话号码不能为空', trigger:'blur'}],
+        //所属学校不能为空
+        teacher_school: [{required:true, message:'学校不能为空', trigger:'blur'}],
       }
     }
   },
+
+  // mounted(){
+  //   this.getSchool();
+  // },
 
   methods:{
     //管理员登录
@@ -238,6 +309,12 @@ export default {
       this.$refs.registerForm_headmaster.resetFields();
     },
 
+    //老师注册表单关闭
+    teacherCancel(){
+      this.visible_teacher = false;
+      this.$refs.registerForm_teacher.resetFields();
+    },
+
     //校长注册
     headmasterRegister(){
       this.$refs.registerForm_headmaster.validate(async (valid) =>{
@@ -260,6 +337,41 @@ export default {
         }
       })
     },
+
+    //老师注册
+    teacherRegister(){
+      this.$refs.registerForm_teacher.validate(async (valid) =>{
+        if(valid){
+          //注册
+          const {data: res} = await this.$http.post("teacherRegister", {
+            teacher_name: this.registerForm_teacher.teacher_name,
+            password: this.registerForm_teacher.teacher_password_certain,
+            telephone: this.registerForm_teacher.teacher_telephone,
+            school_name: this.registerForm_teacher.teacher_school
+          });
+          if(res == "ok"){
+            this.$message.success("注册成功！");
+          }else{
+            this.$message.error("注册失败！");
+          }
+          this.teacherCancel();
+        }else{
+          this.$message.error('个人信息需填写完整！');
+        }
+      })
+    },
+
+    async getSchool(){
+      this.visible_teacher = true;
+      const {data: res} = await this.$http.get("getSchool");
+      this.schoolList = res;
+      for(let i=0; i<this.schoolList.length; i++){
+        this.schoolData.push({
+          key: i,
+          label: this.schoolList[i]
+        })
+      }
+    }
   }
 }
 </script>
