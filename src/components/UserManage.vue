@@ -8,13 +8,18 @@
     </el-breadcrumb>
 
     <!--校长列表主体部分-->
-    <el-card style="width: 95%" >
+    <el-card style="width: 95%">
       校长列表
       <el-row>
         <el-col :span="10">
           <!--搜索区域-->
-          <el-input placeholder="请输入搜索内容" style="margin-top: 10px">
-            <el-button slot="append" icon="el-icon-search" @click=""></el-button>
+          <el-input
+              placeholder="请输入搜索内容"
+              style="margin-top: 10px"
+              v-model="queryInfo_headmaster.query"
+              clearable
+              @clear="getHeadmaster">
+            <el-button slot="append" icon="el-icon-search" @click="getHeadmaster"></el-button>
           </el-input>
         </el-col>
       </el-row>
@@ -34,7 +39,7 @@
         <el-table-column label="操作" width="180">
           <template slot-scope="scope">
             <el-button type="primary" size="small" icon="el-icon-edit" @click="">编辑</el-button>
-            <el-button type="danger" size="small" icon="el-icon-delete" @click="">删除</el-button>
+            <el-button type="danger" size="small" icon="el-icon-delete" @click="deleteHeadmaster(scope.row.headmaster_id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -59,8 +64,13 @@
       <el-row>
         <el-col :span="10">
           <!--搜索区域-->
-          <el-input placeholder="请输入搜索内容" style="margin-top: 10px">
-            <el-button slot="append" icon="el-icon-search" @click=""></el-button>
+          <el-input
+              placeholder="请输入搜索内容"
+              style="margin-top: 10px"
+              v-model="queryInfo_teacher.query"
+              clearable
+              @clear="getTeacher">
+            <el-button slot="append" icon="el-icon-search" @click="getTeacher"></el-button>
           </el-input>
         </el-col>
       </el-row>
@@ -80,7 +90,7 @@
         <el-table-column label="操作" width="180">
           <template slot-scope="scope">
             <el-button type="primary" size="small" icon="el-icon-edit" @click="">编辑</el-button>
-            <el-button type="danger" size="small" icon="el-icon-delete" @click="">删除</el-button>
+            <el-button type="danger" size="small" icon="el-icon-delete" @click="deleteTeacher(scope.row.teacher_id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -105,13 +115,8 @@
 export default {
   name: "UserManage",
   created() {
-    if(window.sessionStorage.getItem("identity") == "管理员"){
-      this.getHeadmaster();
-      this.getTeacher();
-    }
-    if(window.sessionStorage.getItem("identity") == "校长"){
-      this.getTeacher();
-    }
+    this.getHeadmaster();
+    this.getTeacher();
   },
   data(){
     return{
@@ -170,6 +175,42 @@ export default {
     teacherCurrentChange(newPage){
       this.queryInfo_teacher.pageNum = newPage;
       this.getTeacher();
+    },
+
+    //删除校长
+    async deleteHeadmaster(headmaster_id){
+      const confirmResult = await this.$confirm("此操作将永久删除该用户，是否继续？","提示",{
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      if(confirmResult != 'confirm')
+        return this.$message.info("已取消删除");
+      else{
+        const {data: res} = await this.$http.delete("deleteHeadmaster?headmaster_id=" + headmaster_id);
+        if(res != "ok")
+          return this.$message.error("删除失败");
+        this.$message.success("删除成功");
+        await this.getHeadmaster();
+      }
+    },
+
+    //删除老师
+    async deleteTeacher(teacher_id){
+      const confirmResult = await this.$confirm("此操作将永久删除该用户，是否继续？","提示",{
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      if(confirmResult != 'confirm')
+        return this.$message.info("已取消删除");
+      else{
+        const {data: res} = await this.$http.delete("deleteTeacher?teacher_id=" + teacher_id);
+        if(res != "ok")
+          return this.$message.error("删除失败");
+        this.$message.success("删除成功");
+        await this.getTeacher();
+      }
     },
   }
 }

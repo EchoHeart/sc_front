@@ -43,7 +43,7 @@
                 <span>信息管理</span>
               </template>
               <el-menu-item index="UserManage" class="el-icon-user" v-bind:disabled="this.disable_1" @click="savePath('UserManage')">账户管理</el-menu-item>
-              <el-menu-item index="1-2" class="el-icon-school" v-bind:disabled="this.disable_2" @click="schoolManage">学校管理</el-menu-item>
+              <el-menu-item index="1-2" class="el-icon-school" v-bind:disabled="this.disable_2" @click="">学校管理</el-menu-item>
               <el-menu-item index="QualificationCheck" class="el-icon-check" v-bind:disabled="this.disable_3" @click="savePath('QualificationCheck')">资质审核</el-menu-item>
               <el-submenu index="1-4">
                 <template slot="title">
@@ -51,7 +51,7 @@
                   <span style="margin-left: -8px">套餐管理</span>
                 </template>
                 <el-menu-item index="1-4-1" v-bind:disabled="this.disable_4" class="el-icon-shopping-cart-2">套餐购买</el-menu-item>
-                <el-menu-item index="1-4-2" v-bind:disabled="this.disable_5" class="el-icon-setting">套餐设置</el-menu-item>
+                <el-menu-item index="ServiceManage" v-bind:disabled="this.disable_5" class="el-icon-setting" @click="savePath('ServiceManage')">套餐设置</el-menu-item>
               </el-submenu>
             </el-submenu>
             <el-submenu index="2">
@@ -205,6 +205,7 @@ export default {
       this.disable_10 = true;
     }
     if(this.Identity == "校长"){
+      this.disable_1 = true;
       this.disable_3 = true;
       this.disable_5 = true;
       this.disable_6 = true;
@@ -292,12 +293,7 @@ export default {
     savePath(path){
       window.sessionStorage.setItem("activePath",path);
       this.activePath = path;
-    },
-
-
-    schoolManage(){
-
-    },
+    }
   }
 }
 </script>

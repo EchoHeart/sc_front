@@ -5,6 +5,7 @@ import Home from "@/components/Home"
 import Welcome from "@/components/Welcome";
 import UserManage from "@/components/UserManage";
 import QualificationCheck from "@/components/QualificationCheck";
+import ServiceManage from "@/components/ServiceManage";
 
 Vue.use(VueRouter)
 
@@ -21,7 +22,8 @@ const routes = [
     children: [
       {path: '/Welcome',name: 'Welcome',component: Welcome},
       {path: '/UserManage',name: 'UserManage',component: UserManage},
-      {path: '/QualificationCheck',name: 'QualificationCheck',component: QualificationCheck}
+      {path: '/QualificationCheck',name: 'QualificationCheck',component: QualificationCheck},
+      {path: '/ServiceManage',name: "ServiceManage",component: ServiceManage}
     ]
   }
 ]
