@@ -1,5 +1,5 @@
 <template>
-  <div style="overflow: auto; height: 85%; position: absolute">
+  <div style="overflow: auto; height: 87%; width: 84%; position: absolute">
     <!--面包屑导航区-->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/Welcome' }">首页</el-breadcrumb-item>
@@ -8,7 +8,7 @@
     </el-breadcrumb>
 
     <!--校长资质审核-->
-    <el-card>
+    <el-card style="width: 99%">
       校长资质审核
       <el-transfer
           style="text-align: left; margin-top: 20px; margin-left: 150px"
@@ -37,7 +37,7 @@
     </el-card>
 
     <!--老师资质审核-->
-    <el-card style="margin-top: 15px">
+    <el-card style="width: 99%; margin-top: 15px">
       老师资质审核
       <el-transfer
           style="text-align: left; margin-top: 20px; margin-left: 150px"
@@ -160,7 +160,6 @@ export default {
 .transfer-footer {
   margin-left: 140px;
   padding: 6px 5px;
-  ;
 }
 .el-breadcrumb{
   margin-bottom: 15px;

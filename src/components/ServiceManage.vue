@@ -1,5 +1,5 @@
 <template>
-  <div style="overflow: auto; height: 85%; position: absolute">
+  <div style="overflow: auto; height: 87%; position: absolute">
     <!--面包屑导航区-->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/Welcome' }">首页</el-breadcrumb-item>
@@ -8,32 +8,14 @@
       <el-breadcrumb-item>套餐设置</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-card style="width: 99%">
-      套餐介绍
-      <el-carousel type="card" height="400px" :interval="4000">
-        <el-carousel-item style="width: 500px">
-          <img src="../assets/earthquake.png" style="width: 500px; height: 300px">
-          <div>地震灾害逃避演练</div>
-        </el-carousel-item>
-        <el-carousel-item style="width: 500px">
-          <img src="../assets/fire.png" style="width: 500px; height: 300px">
-          <div>火灾灾害逃避演练</div>
-        </el-carousel-item>
-        <el-carousel-item style="width: 500px">
-          <img src="../assets/torrent.png" style="width: 500px; height: 300px">
-          <div>泥石流灾害逃避演练</div>
-        </el-carousel-item>
-        <el-carousel-item style="width: 500px">
-          <img src="../assets/evacuate.png" style="width: 500px; height: 300px">
-          <div>应急疏散演练</div>
-        </el-carousel-item>
-      </el-carousel>
-    </el-card>
-
     <el-card style="width: 99%; margin-top: 15px">
       套餐列表
       <el-row>
-        <el-button type="primary" style="margin-top: 10px;margin-left: 895px" icon="el-icon-plus" @click="addService">添加套餐</el-button>
+        <el-button
+            type="primary"
+            style="margin-top: 10px;margin-left: 895px"
+            icon="el-icon-plus"
+            @click="visible_addService_form = true">添加套餐</el-button>
       </el-row>
 
       <!--列表 border边框 stripe隔行变色-->
@@ -55,7 +37,7 @@
       <el-form ref="addService_form" :model="addService_form" label-width="80px">
         <el-form-item label="套餐类型" prop="service_type">
           <el-radio-group v-model="addService_form.service_type">
-            <el-radio-button label="套餐A" :disabled="true"></el-radio-button>
+            <el-radio-button label="套餐A"></el-radio-button>
             <el-radio-button label="套餐B"></el-radio-button>
             <el-radio-button label="套餐C"></el-radio-button>
             <el-radio-button label="套餐D"></el-radio-button>
@@ -81,7 +63,7 @@
         </el-form-item>
         <el-form-item style="margin-left: 320px">
           <el-button type="info" @click="cancel">取消</el-button>
-          <el-button type="primary" @click="">立即创建</el-button>
+          <el-button type="primary" @click="addService">添加套餐</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -98,7 +80,9 @@ export default {
   data(){
     return{
       serviceList: [],
+      typeList: [],
       visible_addService_form: false,
+      service_infor: '',
       addService_form: {
         service_type: '套餐A',
         service_price: '',
@@ -110,21 +94,47 @@ export default {
   methods: {
     async getService() {
       const {data: res} = await this.$http.get("getAllService");
-      if(res.flag == "ok")
+      if(res.flag == "ok"){
         this.serviceList = res.object;
+        for(let i=0; i<this.serviceList.length; i++){
+          this.typeList.push(this.serviceList[i].service_type);
+        }
+      }
       else
         this.$message.error("套餐获取失败！");
-    },
-    addService(){
-      this.visible_addService_form = true;
     },
     cancel(){
       this.addService_form.service_type = '套餐A';
       this.addService_form.service_price = '';
-      this.addService_form.disaster_type = [];
+      this.addService_form.disaster_type = ['应急疏散'];
       this.addService_form.service_usable_time = 30;
       this.visible_addService_form = false;
     },
+    async addService(){
+      for (let i = 0; i < this.addService_form.disaster_type.length; i++) {
+        this.service_infor = this.service_infor + this.addService_form.disaster_type[i] + " ";
+      }
+      if(this.typeList.includes(this.addService_form.service_type.replace("套餐", ""))){
+        this.$message.error("该类套餐已存在，请重新选择套餐类型！");
+      }
+      else{
+        const {data: res} = await this.$http.post("addService", {
+          service_type: this.addService_form.service_type.replace("套餐", ""),
+          service_price: this.addService_form.service_price,
+          service_infor: this.service_infor,
+          service_usable_time: this.addService_form.service_usable_time
+        })
+        if(res == "ok"){
+          this.cancel();
+          await this.getService();
+          this.$message.success("添加套餐成功！");
+        }
+        else{
+          this.cancel();
+          this.$message.error("添加套餐失败！");
+        }
+      }
+    }
   }
 }
 </script>
@@ -136,11 +146,5 @@ export default {
 }
 .el-card{
   box-shadow: 0 1px 1px rgba(0,8,10,0.15) !important;
-}
-.el-carousel__item:nth-child(2n){
-  background-color: #99a9bf;
-}
-.el-carousel__item:nth-child(2n+1){
-  background-color: #d3dce6;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div style="overflow: auto; height: 85%; position: absolute">
+  <div style="overflow: auto; height: 87%; width: 84%; position: absolute">
     <!--面包屑导航区-->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/Welcome' }">首页</el-breadcrumb-item>
@@ -8,7 +8,7 @@
     </el-breadcrumb>
 
     <!--校长列表主体部分-->
-    <el-card style="width: 95%">
+    <el-card style="width: 99%">
       校长列表
       <el-row>
         <el-col :span="10">
@@ -59,7 +59,7 @@
     </el-card>
 
     <!--老师列表主体部分-->
-    <el-card style="margin-top: 10px; width: 95%">
+    <el-card style="margin-top: 10px; width: 99%">
       老师列表
       <el-row>
         <el-col :span="10">

@@ -33,43 +33,44 @@
 
       <el-container>
         <!--侧边栏-->
-        <el-aside width="180px">
+        <el-aside style="width: 200px">
           <el-menu background-color="#0086b3" text-color="#fff"
-                   active-text-color="#ffd04b" style="width: 180px"
+                   active-text-color="#ffd04b" style="width: 200px; height: 100%"
                    :router= true :default-active="activePath">
             <el-submenu index="1">
               <template slot="title">
                 <i class="el-icon-setting"></i>
                 <span>信息管理</span>
               </template>
-              <el-menu-item index="UserManage" class="el-icon-user" v-bind:disabled="this.disable_1" @click="savePath('UserManage')">账户管理</el-menu-item>
-              <el-menu-item index="1-2" class="el-icon-school" v-bind:disabled="this.disable_2" @click="">学校管理</el-menu-item>
-              <el-menu-item index="QualificationCheck" class="el-icon-check" v-bind:disabled="this.disable_3" @click="savePath('QualificationCheck')">资质审核</el-menu-item>
-              <el-submenu index="1-4">
+              <el-menu-item index="UserManage" class="el-icon-user" v-show="Identity == '管理员'" @click="savePath('UserManage')">账户管理</el-menu-item>
+              <el-menu-item index="1-2" class="el-icon-school" v-show="Identity == '校长'" @click="">学校管理</el-menu-item>
+              <el-menu-item index="ClassManage" class="el-icon-school" v-show="Identity == '老师'" @click="savePath('ClassManage')">班级管理</el-menu-item>
+              <el-menu-item index="QualificationCheck" class="el-icon-check" v-show="Identity == '管理员'" @click="savePath('QualificationCheck')">资质审核</el-menu-item>
+              <el-submenu index="1-4" v-show="Identity != '老师'">
                 <template slot="title">
                   <i class="el-icon-food" style="margin-left: -6px; color: white"></i>
                   <span style="margin-left: -8px">套餐管理</span>
                 </template>
-                <el-menu-item index="1-4-1" v-bind:disabled="this.disable_4" class="el-icon-shopping-cart-2">套餐购买</el-menu-item>
-                <el-menu-item index="ServiceManage" v-bind:disabled="this.disable_5" class="el-icon-setting" @click="savePath('ServiceManage')">套餐设置</el-menu-item>
+                <el-menu-item index="ServiceBuy" v-show="Identity == '校长'" class="el-icon-shopping-cart-2" @click="savePath('ServiceBuy')">套餐购买</el-menu-item>
+                <el-menu-item index="ServiceManage" v-show="Identity == '管理员'" class="el-icon-setting" @click="savePath('ServiceManage')">套餐设置</el-menu-item>
               </el-submenu>
             </el-submenu>
-            <el-submenu index="2">
+            <el-submenu index="2" v-show="Identity == '老师'">
               <template slot="title">
                 <i class="el-icon-reading"></i>
                 <span>教学管理</span>
               </template>
-              <el-menu-item index="2-1" v-bind:disabled="this.disable_6" class="el-icon-document-copy">题库管理</el-menu-item>
-              <el-menu-item index="2-2" v-bind:disabled="this.disable_7" class="el-icon-menu">安排课程</el-menu-item>
+              <el-menu-item index="2-1" class="el-icon-document-copy" @click="">题库管理</el-menu-item>
+              <el-menu-item index="LessonManage" class="el-icon-menu" @click="savePath('LessonManage')">安排课程</el-menu-item>
             </el-submenu>
-            <el-submenu index="3" >
+            <el-submenu index="3" v-show="Identity != '管理员'">
               <template slot="title">
                 <i class="el-icon-s-data"></i>
                 <span>数据图表</span>
               </template>
-              <el-menu-item index="3-1" v-bind:disabled="this.disable_8" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter">地震</el-menu-item>
-              <el-menu-item index="3-2" v-bind:disabled="this.disable_9" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter">火灾</el-menu-item>
-              <el-menu-item index="3-3" v-bind:disabled="this.disable_10" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter">泥石流</el-menu-item>
+              <el-menu-item index="3-1" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter" >应急疏散</el-menu-item>
+              <el-menu-item index="3-2" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter">泥石流</el-menu-item>
+              <el-menu-item index="3-3" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter">地震</el-menu-item>
             </el-submenu>
           </el-menu>
         </el-aside>
@@ -111,7 +112,7 @@
         <el-divider></el-divider>
         <div style="margin-top: 20px">
           所属学校：
-          <el-input style="width: 130px" v-model="msg_school" disabled></el-input>
+          <el-input style="width: 200px" v-model="msg_school" disabled></el-input>
         </div>
         <el-divider></el-divider>
         <div style="margin-top: 20px">
@@ -170,18 +171,10 @@ export default {
       is_disable: true,
       //原密码输入是否通过
       pass: false,
-      activePath: '/Welcome',
+
+      activePath: '',
       Identity: '',
-      disable_1: false,
-      disable_2: false,
-      disable_3: false,
-      disable_4: false,
-      disable_5: false,
-      disable_6: false,
-      disable_7: false,
-      disable_8: false,
-      disable_9: false,
-      disable_10: false,
+
       msg_ID: window.sessionStorage.getItem("id"),
       msg_name: window.sessionStorage.getItem("name"),
       msg_telephone: window.sessionStorage.getItem("telephone"),
@@ -196,28 +189,6 @@ export default {
   created() {
     this.activePath = window.sessionStorage.getItem("activePath");
     this.Identity = window.sessionStorage.getItem("identity");
-    if(this.Identity == "管理员"){
-      this.disable_4 = true;
-      this.disable_6 = true;
-      this.disable_7 = true;
-      this.disable_8 = true;
-      this.disable_9 = true;
-      this.disable_10 = true;
-    }
-    if(this.Identity == "校长"){
-      this.disable_1 = true;
-      this.disable_3 = true;
-      this.disable_5 = true;
-      this.disable_6 = true;
-      this.disable_7 = true;
-    }
-    if(this.Identity == "老师"){
-      this.disable_1 = true;
-      this.disable_2 = true;
-      this.disable_3 = true;
-      this.disable_4 = true;
-      this.disable_5 = true;
-    }
   },
   name: "Home",
   methods: {
@@ -306,10 +277,6 @@ export default {
   font-size: 20px;
   font-weight: bolder;
   background: -webkit-linear-gradient(left,white,#0086b3) no-repeat;
-
-}
-.el-aside{
-  background-color: #0086b3;
 }
 .el-main{
   background-color: #eaedf1;
