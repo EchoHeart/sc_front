@@ -27,10 +27,19 @@
                 type="primary"
                 size="mini"
                 icon="el-icon-plus"
-                style="margin-top: 10px"></el-button>
+                style="margin-top: 40px"></el-button>
           </div>
           <div class="text" v-show="timeItem.status == '1'">课程：{{timeItem.lesson}}</div>
           <div class="text" v-show="timeItem.status == '1'">老师：{{timeItem.teacher}}</div>
+          <div class="text" v-show="timeItem.status == '1'">学校：{{timeItem.school}}</div>
+          <div class="text" v-show="timeItem.status == '1'">班级：{{timeItem.class}}</div>
+          <div v-show="timeItem.status == '1'">
+            <el-button
+                type="danger"
+                size="mini"
+                icon="el-icon-delete"
+                style="margin-top: 10px"></el-button>
+          </div>
           <div class="text" v-show="timeItem.status == '-1'">课间休息</div>
         </div>
       </div>
@@ -54,8 +63,14 @@
             <el-radio label="火灾" v-bind:disabled="disabled_4">火灾</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="老师" style="margin-left: 20px">
-          <el-input v-model="classForm.teacher" style="width: 35%"></el-input>
+        <el-form-item label="班级" style="margin-left: 20px">
+          <el-select v-model="classForm.classroom" size="big" placeholder="请选择班级">
+            <el-option
+                v-for="item in this.classroomList"
+                :key="item.key"
+                :label="item.label"
+                :value="item.label"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item style="margin-left: 20px">
           <el-button type="primary" style="margin-left: 70%" @click="addLesson">添加课程</el-button>
@@ -69,10 +84,14 @@
 <script>
 export default {
   name: "ClassManage",
+  created() {
+    this.getClassInfo();
+  },
   data(){
     return {
       today: '',
-      teacher_name: window.sessionStorage.getItem("name"),
+      school_name: window.sessionStorage.getItem("school"),
+      usable: true,
 
       visible_classForm: false,
       disabled_1: true,
@@ -84,7 +103,7 @@ export default {
         date: '',
         time: '',
         class: '应急疏散',
-        teacher: window.sessionStorage.getItem("name")
+        classroom: ''
       },
 
       calendar: [],
@@ -100,32 +119,36 @@ export default {
       lessonList: [],
       //套餐内容表
       serviceList: [],
+      //班级信息
+      classInfo: [],
+      temp: [],
+      classroomList: [],
 
       //-1:休息 0:可排 1:已排
       allTimeArr: [
-        { "time": "8:15-9:00", "lesson": "", "teacher": "", "status": "0" },
-        { "time": "9:00-9:10", "lesson": "", "teacher": "", "status": "-1" },
-        { "time": "9:10-9:55", "lesson": "", "teacher": "", "status": "0" },
-        { "time": "9:55-10:15", "lesson": "", "teacher": "", "status": "-1" },
-        { "time": "10:15-10:55", "lesson": "", "teacher": "", "status": "0" },
-        { "time": "10:55-11:10", "lesson": "", "teacher": "", "status": "-1" },
-        { "time": "11:10-11:55", "lesson": "", "teacher": "", "status": "0" },
-        { "time": "11:55-13:50", "lesson": "", "teacher": "", "status": "-1" },
-        { "time": "13:50-14:35", "lesson": "", "teacher": "", "status": "0" },
-        { "time": "14:35-14:45", "lesson": "", "teacher": "", "status": "-1" },
-        { "time": "14:45-15:30", "lesson": "", "teacher": "", "status": "0" },
-        { "time": "15:30-15:40", "lesson": "", "teacher": "", "status": "-1" },
-        { "time": "15:40-16:25", "lesson": "", "teacher": "", "status": "0" },
-        { "time": "16:25-16:55", "lesson": "", "teacher": "", "status": "-1" },
-        { "time": "16:55-17:40", "lesson": "", "teacher": "", "status": "0" },
-        { "time": "17:40-17:50", "lesson": "", "teacher": "", "status": "-1" },
-        { "time": "17:50-18:35", "lesson": "", "teacher": "", "status": "0" },
-        { "time": "18:35-19:20", "lesson": "", "teacher": "", "status": "-1" },
-        { "time": "19:20-20:05", "lesson": "", "teacher": "", "status": "0" },
-        { "time": "20:05-20:15", "lesson": "", "teacher": "", "status": "-1" },
-        { "time": "20:15-21:00", "lesson": "", "teacher": "", "status": "0" },
-        { "time": "21:00-21:10", "lesson": "", "teacher": "", "status": "-1" },
-        { "time": "21:10-21:55", "lesson": "", "teacher": "", "status": "0" }
+        { "time": "8:15-9:00", "lesson": "", "teacher": "", "school": "", "class": "", "status": "0" },
+        { "time": "9:00-9:10", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "-1" },
+        { "time": "9:10-9:55", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "0" },
+        { "time": "9:55-10:15", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "-1" },
+        { "time": "10:15-10:55", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "0" },
+        { "time": "10:55-11:10", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "-1" },
+        { "time": "11:10-11:55", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "0" },
+        { "time": "11:55-13:50", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "-1" },
+        { "time": "13:50-14:35", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "0" },
+        { "time": "14:35-14:45", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "-1" },
+        { "time": "14:45-15:30", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "0" },
+        { "time": "15:30-15:40", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "-1" },
+        { "time": "15:40-16:25", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "0" },
+        { "time": "16:25-16:55", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "-1" },
+        { "time": "16:55-17:40", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "0" },
+        { "time": "17:40-17:50", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "-1" },
+        { "time": "17:50-18:35", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "0" },
+        { "time": "18:35-19:20", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "-1" },
+        { "time": "19:20-20:05", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "0" },
+        { "time": "20:05-20:15", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "-1" },
+        { "time": "20:15-21:00", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "0" },
+        { "time": "21:00-21:10", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "-1" },
+        { "time": "21:10-21:55", "lesson": "", "teacher": "", "school": "", "class": "",  "status": "0" }
       ]
     }
   },
@@ -196,7 +219,7 @@ export default {
     that.today = that.calendar[0].date
 
     //获取当天排课信息
-    that.getLesson(that.teacher_name,that.today)
+    that.getLesson(that.school_name,that.today)
 
   },
   methods: {
@@ -259,7 +282,7 @@ export default {
       this.today = this.calendar[this.currentIndex].date;
 
       //重新获取排课信息
-      this.getLesson(this.teacher_name,this.today);
+      this.getLesson(this.school_name,this.today);
     },
 
     //为下半部分的点击事件
@@ -271,28 +294,61 @@ export default {
         if(res == "There is no service")
           this.$message.info("所在学校未购买任何套餐！");
         else{
-          this.getService(res);
+          const {data: endTime} = await this.$http.get("getEndTime?school_name=" + window.sessionStorage.getItem("school"))
+          this.isUsable(endTime.split("-")[0],endTime.split("-")[1],endTime.split("-")[2]);
 
-          this.classForm.date = this.calendar[this.currentIndex].date;
-          this.classForm.time = this.timeArr[this.currentTime].time;
-          this.visible_classForm = true;
+          if(this.usable){
+            await this.getService(res);
+
+            this.classForm.date = this.calendar[this.currentIndex].date;
+            this.classForm.time = this.timeArr[this.currentTime].time;
+            this.visible_classForm = true;
+          }
+          else
+            this.$message.error("套餐已过期！");
         }
       }
-      else
-        this.$message.error("该时间段内不允许排课！");
+      if(this.timeArr[index].status == "1"){
+        if(this.timeArr[index].teacher != window.sessionStorage.getItem("name"))
+          this.$message.error("无法删除其它老师预约的课程！");
+        else{
+          this.currentTime = index;
+
+          const confirmResult = await this.$confirm("此操作将永久删除该课程，是否继续？","提示",{
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).catch(err => err)
+          if(confirmResult != 'confirm')
+            return this.$message.info("已取消删除");
+          else{
+            const {data: res} = await this.$http.delete("deleteLesson?teacher_name=" + this.timeArr[this.currentTime].teacher +
+                                                            "&lesson_date=" + this.calendar[this.currentIndex].date +
+                                                            "&lesson_time=" + this.timeArr[this.currentTime].time);
+            if(res != "ok")
+              return this.$message.error("删除失败");
+
+            this.$message.success("删除成功");
+            this.default();
+            await this.getLesson(this.school_name,this.calendar[this.currentIndex].date);
+          }
+        }
+      }
     },
 
     //添加课程
     async addLesson(){
       const {data: res} = await this.$http.post("addLesson",{
         lesson_name: this.classForm.class,
-        teacher_name: this.classForm.teacher,
+        teacher_name: window.sessionStorage.getItem("name"),
+        school_name: window.sessionStorage.getItem("school"),
         lesson_date: this.classForm.date,
-        lesson_time: this.classForm.time
+        lesson_time: this.classForm.time,
+        class_infor: this.classForm.classroom
       })
       if(res == "ok"){
         //重新获取排课信息
-        this.getLesson(this.teacher_name,this.today);
+        await this.getLesson(this.school_name, this.today);
 
         this.classForm.class = "应急疏散";
         this.visible_classForm = false;
@@ -305,8 +361,8 @@ export default {
     },
 
     //获取排课信息
-    async getLesson(teacher, date){
-      const {data: res} = await this.$http.get("getLesson?teacher_name="+teacher+"&lesson_date="+date)
+    async getLesson(school, date){
+      const {data: res} = await this.$http.get("getLesson?school_name="+school+"&lesson_date="+date)
       if(res.flag == "ok"){
         this.lessonList = res.object;
 
@@ -318,12 +374,13 @@ export default {
               if(temp.time == this.lessonList[i].lesson_time){
                 temp.lesson = this.lessonList[i].lesson_name;
                 temp.teacher = this.lessonList[i].teacher_name;
+                temp.school = this.lessonList[i].school_name;
+                temp.class = this.lessonList[i].class_infor;
                 temp.status = 1;
               }//if
             }//for
           }//for
         }//if
-
       }
       else{
         this.$message.error("获取课程失败！")
@@ -352,6 +409,41 @@ export default {
         this.disabled_3 = false;
       if(res.split(" ").indexOf("火灾") != -1)
         this.disabled_4 = false;
+    },
+
+    //获取班级信息
+    getClassInfo(){
+      this.temp = window.sessionStorage.getItem("classroomList").split(",");
+      this.classInfo[0] = this.temp[0];
+
+      //去重
+      for(let i=1; i<this.temp.length; i++){
+        if(this.classInfo.indexOf(this.temp[i]) != -1)
+          continue;
+        else
+          this.classInfo.push(this.temp[i]);
+      }
+
+      for(let i=0; i<this.classInfo.length; i++){
+        this.classroomList.push({
+          key: i,
+          label: this.classInfo[i]
+        })
+      }
+    },
+
+    //判断套餐是否过期
+    isUsable(year,month,day){
+      if(parseInt(this.today.split("-")[0]) > parseInt(year))
+        this.usable = false;
+      else if(parseInt(this.today.split("-")[0]) == parseInt(year)){
+        if(parseInt(this.today.split("-")[1]) > parseInt(month))
+          this.usable = false;
+        else if(parseInt(this.today.split("-")[1]) == parseInt(month)){
+          if(parseInt(this.today.split("-")[2]) > parseInt(day))
+              this.usable = false;
+        }
+      }
     }
 
   }
@@ -403,7 +495,7 @@ export default {
 }
 .time .listItem{
   width: 25%;
-  height: 100px;
+  height: 180px;
   text-align: center;
   box-sizing: border-box;
   background-color: #fff;

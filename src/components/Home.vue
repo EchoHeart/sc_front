@@ -61,7 +61,7 @@
                 <span>教学管理</span>
               </template>
               <el-menu-item index="2-1" class="el-icon-document-copy" @click="">题库管理</el-menu-item>
-              <el-menu-item index="LessonManage" class="el-icon-menu" @click="savePath('LessonManage')">安排课程</el-menu-item>
+              <el-menu-item index="LessonManage" class="el-icon-menu" @click="savePath('LessonManage')">课程预约</el-menu-item>
             </el-submenu>
             <el-submenu index="3" v-show="Identity != '管理员'">
               <template slot="title">

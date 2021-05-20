@@ -107,6 +107,7 @@ export default {
       },
 
       studentList: [],
+      classroomList: []
     }
   },
 
@@ -118,8 +119,13 @@ export default {
     async getUserBySchoolAndTeacher(){
       const {data: res} = await this.$http.get("getUserBySchoolAndTeacher?school_name="+window.sessionStorage.getItem("school")+
                                                    "&teacher_name="+window.sessionStorage.getItem("name"));
-      if(res.flag == "ok")
+      if(res.flag == "ok"){
         this.studentList = res.object;
+        for(let i=0; i<this.studentList.length; i++){
+          this.classroomList[i] = this.studentList[i].user_grade+"年级"+"（"+this.studentList[i].user_class+"）班"
+        }
+        window.sessionStorage.setItem("classroomList",this.classroomList);
+      }
       else
         this.$message.error("获取学生信息失败！");
     },
