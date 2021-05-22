@@ -9,7 +9,10 @@ import ServiceManage from "@/components/ServiceManage";
 import ServiceBuy from "@/components/ServiceBuy";
 import LessonManage from "@/components/LessonManage";
 import ClassManage from "@/components/ClassManage";
-
+import SchoolInfo from "@/components/SchoolInfo";
+import EarthquakeInfo from "@/components/EarthquakeInfo";
+import EmergencyInfo from "@/components/EmergencyInfo";
+import LandslideInfo from "@/components/LandslideInfo";
 Vue.use(VueRouter)
 
 const routes = [
@@ -17,7 +20,8 @@ const routes = [
     path: '/',
     name: 'Login',
     component: Login
-  },{
+  },
+  {
     path: '/Home',
     name: 'Home',
     component: Home,
@@ -28,7 +32,11 @@ const routes = [
       {path: '/ServiceManage',name: "ServiceManage",component: ServiceManage},
       {path: '/ServiceBuy',name: "ServiceBuy",component: ServiceBuy},
       {path: '/LessonManage',name: "LessonManage", component: LessonManage},
-      {path: '/ClassManage',name: "ClassManage", component: ClassManage}
+      {path: '/ClassManage',name: "ClassManage", component: ClassManage},
+      {path: '/SchoolInfo',name: "SchoolInfo", component: SchoolInfo},
+      {path: '/EarthquakeInfo',name: "EarthquakeInfo", component: EarthquakeInfo},
+      {path: '/EmergencyInfo',name: "EmergencyInfo", component: EmergencyInfo},
+      {path: '/LandslideInfo',name: "LandslideInfo", component: LandslideInfo}
     ]
   }
 ]

@@ -119,12 +119,9 @@
             <el-input placeholder="请输入电话号码" autocomplete="off" v-model="form_1.telephone"></el-input>
           </el-form-item>
           <el-form-item label="验证码" :label-width="formLabelWidth" prop="code">
-            <el-input
-                placeholder="请输入验证码"
-                autocomplete="off"
-                v-model="form_1.code">
-              <el-button slot="append" @click="getCode">获取验证码</el-button>
-            </el-input>
+            <el-input placeholder="请输入验证码" autocomplete="off" v-model="form_1.code"></el-input>
+            <el-button :loading="isLoad" :disabled="isDisable" @click="sendCode">获取验证码</el-button>
+            <span>{{ statusMsg}}</span>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" style="margin-left: 320px" @click="next">下一步</el-button>
@@ -182,6 +179,13 @@ export default {
     }
 
     return{
+      isLoad: false,
+      isDisable: false,
+      statusMsg: '',
+      randomCode: 0,
+      count: 60,
+      timer: null,
+
       //校长注册表单是否可见
       visible_headmaster: false,
       //老师注册表单是否可见
@@ -482,23 +486,65 @@ export default {
     },
 
     //获取验证码
-    getCode(){
+    sendCode(){
+      if (this.form_1.telephone != '') {
+        // let timerid;
+        // if(timerid){
+        //   return false;
+        // }
+        this.isLoad = true;
+        this.statusMsg = '验证码发送中...';
 
+        var form = this.form_1;
+        this.randomCode = Math.floor(Math.random() * (9999 - 1000) + 1000);
+        const text='验证码：'+this.randomCode+',您正在使用找回密码功能，在五分钟之内有效，请勿泄露给其他人使用。\n【奇燃公司】'
+        let param = new URLSearchParams();
+        param.append('Uid','Jago');
+        param.append('Key','d41d8cd98f00b204e980');
+        param.append('smsMob',form.telephone);
+        param.append('smsText',text);
+        this.$http.post('http://utf8.api.smschinese.cn/',param,{
+          headers:{
+            'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'//必须要加头
+          },
+        }).then(function (response) {
+          this.$message.error(response)}
+        )
+        // 因为只有一次机会，要是来不及可以先通过console查看验证码演示后面的功能
+        console.log(this.randomCode); // test
+
+        this.$message({
+          showClose: true,
+          message: '发送成功，有效期5分钟！',
+          type: 'success'
+        })
+        this.isLoad = false;
+        this.isDisable = true;
+        // timerid = window.setInterval(function() {} 这种方式已不再受支持
+        this.timer = setInterval(() => {
+          // 好强！用tab上面的符号
+          this.statusMsg = `验证码已发送,${this.count}秒后重新发送`;
+          if (this.count <= 1) {
+            clearInterval(this.timer);
+            this.timer = null;
+            this.isDisable = false;
+            this.statusMsg = '';
+          }
+          this.count--;
+        }, 1000)
+      }else{
+        this.$message.error('请输入电话号码！');
+      }
     },
 
     next(){
       this.$refs.form_1.validate(async (valid) => {
-        if(valid){
-          //验证码是否正确
-
+        if(valid && this.form_1.code == this.randomCode){
           //如果正确
           this.active++;
           this.index++;
-          // //否则
-          // this.$message.error("验证码错误");
-
         }else{
-          this.$message.error('未填入完整信息！');
+          this.$message.error('验证码错误！');
         }
       });
     },

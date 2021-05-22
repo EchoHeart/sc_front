@@ -43,7 +43,7 @@
                 <span>信息管理</span>
               </template>
               <el-menu-item index="UserManage" class="el-icon-user" v-show="Identity == '管理员'" @click="savePath('UserManage')">账户管理</el-menu-item>
-              <el-menu-item index="1-2" class="el-icon-school" v-show="Identity == '校长'" @click="">学校管理</el-menu-item>
+              <el-menu-item index="SchoolInfo" class="el-icon-school" v-show="Identity == '校长'" @click="savePath('SchoolInfo')">学校管理</el-menu-item>
               <el-menu-item index="ClassManage" class="el-icon-school" v-show="Identity == '老师'" @click="savePath('ClassManage')">班级管理</el-menu-item>
               <el-menu-item index="QualificationCheck" class="el-icon-check" v-show="Identity == '管理员'" @click="savePath('QualificationCheck')">资质审核</el-menu-item>
               <el-submenu index="1-4" v-show="Identity != '老师'">
@@ -68,9 +68,9 @@
                 <i class="el-icon-s-data"></i>
                 <span>数据图表</span>
               </template>
-              <el-menu-item index="3-1" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter" >应急疏散</el-menu-item>
-              <el-menu-item index="3-2" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter">泥石流</el-menu-item>
-              <el-menu-item index="3-3" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter">地震</el-menu-item>
+              <el-menu-item index="EmergencyInfo" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter" >应急疏散</el-menu-item>
+              <el-menu-item index="LandslideInfo" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter">泥石流</el-menu-item>
+              <el-menu-item index="EarthquakeInfo" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter">地震</el-menu-item>
             </el-submenu>
           </el-menu>
         </el-aside>
