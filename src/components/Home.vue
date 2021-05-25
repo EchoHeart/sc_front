@@ -59,7 +59,7 @@
                 <i class="el-icon-reading"></i>
                 <span>教学管理</span>
               </template>
-              <el-menu-item index="2-1" v-bind:disabled="this.disable_6" class="el-icon-document-copy">题库管理</el-menu-item>
+              <el-menu-item index="QuestionBank" v-bind:disabled="this.disable_6" class="el-icon-document-copy">题库管理</el-menu-item>
               <el-menu-item index="2-2" v-bind:disabled="this.disable_7" class="el-icon-menu">安排课程</el-menu-item>
             </el-submenu>
             <el-submenu index="3" >
