@@ -43,14 +43,14 @@
                 <span>信息管理</span>
               </template>
               <el-menu-item index="UserManage" class="el-icon-user" v-bind:disabled="this.disable_1" @click="savePath('UserManage')">账户管理</el-menu-item>
-              <el-menu-item index="1-2" class="el-icon-school" v-bind:disabled="this.disable_2" @click="">学校管理</el-menu-item>
+              <el-menu-item index="SchoolInfo" class="el-icon-school" v-bind:disabled="this.disable_2" @click="">学校管理</el-menu-item>
               <el-menu-item index="QualificationCheck" class="el-icon-check" v-bind:disabled="this.disable_3" @click="savePath('QualificationCheck')">资质审核</el-menu-item>
               <el-submenu index="1-4">
                 <template slot="title">
                   <i class="el-icon-food" style="margin-left: -6px; color: white"></i>
                   <span style="margin-left: -8px">套餐管理</span>
                 </template>
-                <el-menu-item index="1-4-1" v-bind:disabled="this.disable_4" class="el-icon-shopping-cart-2">套餐购买</el-menu-item>
+                <el-menu-item index="ServiceBuy" v-bind:disabled="this.disable_4" class="el-icon-shopping-cart-2">套餐购买</el-menu-item>
                 <el-menu-item index="ServiceManage" v-bind:disabled="this.disable_5" class="el-icon-setting" @click="savePath('ServiceManage')">套餐设置</el-menu-item>
               </el-submenu>
             </el-submenu>
@@ -59,17 +59,17 @@
                 <i class="el-icon-reading"></i>
                 <span>教学管理</span>
               </template>
-              <el-menu-item index="2-1" v-bind:disabled="this.disable_6" class="el-icon-document-copy">题库管理</el-menu-item>
-              <el-menu-item index="2-2" v-bind:disabled="this.disable_7" class="el-icon-menu">安排课程</el-menu-item>
+              <el-menu-item index="QuestionBank" v-bind:disabled="this.disable_6" class="el-icon-document-copy">题库管理</el-menu-item>
+              <el-menu-item index="ClassManage" v-bind:disabled="this.disable_7" class="el-icon-menu">安排课程</el-menu-item>
             </el-submenu>
             <el-submenu index="3" >
               <template slot="title">
                 <i class="el-icon-s-data"></i>
                 <span>数据图表</span>
               </template>
-              <el-menu-item index="3-1" v-bind:disabled="this.disable_8" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter">地震</el-menu-item>
-              <el-menu-item index="3-2" v-bind:disabled="this.disable_9" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter">火灾</el-menu-item>
-              <el-menu-item index="3-3" v-bind:disabled="this.disable_10" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter">泥石流</el-menu-item>
+              <el-menu-item index="EarthquakeInfo" v-bind:disabled="this.disable_8" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter">地震</el-menu-item>
+              <el-menu-item index="FireInfo" v-bind:disabled="this.disable_9" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter">火灾</el-menu-item>
+              <el-menu-item index="LandslideInfo" v-bind:disabled="this.disable_10" class="el-icon-data-line" style="font-size: 14.5px;font-weight: lighter">泥石流</el-menu-item>
             </el-submenu>
           </el-menu>
         </el-aside>
