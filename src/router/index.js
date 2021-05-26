@@ -6,8 +6,6 @@ import Welcome from "@/components/Welcome";
 import UserManage from "@/components/UserManage";
 import QualificationCheck from "@/components/QualificationCheck";
 import ServiceManage from "@/components/ServiceManage";
-import QuestionBank from "@/components/QuestionBank";
-
 
 Vue.use(VueRouter)
 
@@ -25,8 +23,7 @@ const routes = [
       {path: '/Welcome',name: 'Welcome',component: Welcome},
       {path: '/UserManage',name: 'UserManage',component: UserManage},
       {path: '/QualificationCheck',name: 'QualificationCheck',component: QualificationCheck},
-      {path: '/ServiceManage',name: "ServiceManage",component: ServiceManage},
-      {path: '/QuestionBank',name:"QuestionBank",component: QuestionBank}
+      {path: '/ServiceManage',name: "ServiceManage",component: ServiceManage}
     ]
   }
 ]
