@@ -2,15 +2,16 @@
     <div class="dashboard-editor-container">
         <!--！！！命名！！！-->
         <text-group @handleSetLineChartData="handleSetLineChartData" />
+        <!--<text-group />-->
 
         <el-row class="chart-wrapper">
-            <el-col :xs="24" :sm="24" :lg="8" push="-1">
+            <el-col :xs="24" :sm="24" :lg="8" :push="-1">
                 <line-chart :chart-data="lineChartData" />
             </el-col>
         </el-row>
 
         <el-row class="chart-wrapper">
-            <el-col :xs="24" :sm="24" :lg="8" push="1">
+            <el-col :xs="24" :sm="24" :lg="8" :push="1">
                 <div>
                     <bar-chart />
                 </div>
@@ -25,22 +26,16 @@
     import BarChart from './charts/BarChart'
 
     const lineChartData = {
-        students: {
-            expectedData: [20, 40, 60, 80, 100, 120, 140],
-            actualData: [0, 0, 3, 5, 5, 10, 10]
+        scores_Landslide: {
+            // expectedData: [40, 60, 70, 80, 90, 95, 99],
+            actualData: [0,0,0,0,0,0,0]
         },
-        teachers: {
-            expectedData: [2, 4, 6, 8, 10, 12, 14],
-            actualData: [0, 1, 3, 5, 7, 9, 9]
+        scores_Earthquake: {
+            actualData: [0,0,0,0,0,0,0]
         },
-        scores: {
-            expectedData: [40, 60, 70, 80, 90, 95, 99],
-            actualData: [0, 0, 60, 70, 70, 75, 89]
+        scores_Fire: {
+            actualData: [0,0,0,0,0,0,0]
         },
-        questions: {
-            expectedData: [0, 10, 20, 40, 60, 100, 150],
-            actualData: [5, 15, 30, 40, 60, 65, 70]
-        }
     }
 
     export default {
@@ -48,17 +43,31 @@
         components: {
             TextGroup,
             LineChart,
-            BarChart
+            // BarChart
+        },
+        created() {
+          this.getAverageScore();
         },
         data () {
             return {
-                lineChartData: lineChartData.students
+                lineChartData: lineChartData.scores_Landslide,
+                dateList: ['2021-05-21', '2021-05-22', '2021-05-23', '2021-05-24', '2021-05-25', '2021-05-26', '2021-05-27'],
             }
         },
         methods: {
             handleSetLineChartData (type) {
                 this.lineChartData = lineChartData[type]
-            }
+            },
+            async getAverageScore(){
+                for(let i=0; i<this.dateList.length; i++){
+                    const {data: res1} = await this.$http.get("getAverageScore?game_type="+"泥石流"+"&play_date="+this.dateList[i]);
+                    lineChartData.scores_Landslide.actualData[i] = res1;
+                    const {data: res2} = await this.$http.get("getAverageScore?game_type="+"地震"+"&play_date="+this.dateList[i]);
+                    lineChartData.scores_Earthquake.actualData[i] = res2;
+                    const {data: res3} = await this.$http.get("getAverageScore?game_type="+"火灾"+"&play_date="+this.dateList[i]);
+                    lineChartData.scores_Fire.actualData[i] = res3;
+                }
+            },
         }
     }
 </script>

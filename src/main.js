@@ -27,8 +27,8 @@ Vue.prototype.$http = axios
 
 //设置访问根路径
 //！！！！！！！酌情更改
-// axios.defaults.baseURL = "http://122.9.144.196:9000"
-axios.defaults.baseURL = "http://localhost:9000"
+axios.defaults.baseURL = "http://122.9.144.196:9000"
+// axios.defaults.baseURL = "http://localhost:9000"
 
 new Vue({
   router,

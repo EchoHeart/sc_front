@@ -392,9 +392,9 @@ export default {
             window.sessionStorage.setItem("telephone",res.object.telephone);
             window.sessionStorage.setItem("school",res.object.school_name);
             window.sessionStorage.setItem("identity","校长");
-            window.sessionStorage.setItem("activePath","ServiceBuy");
+            window.sessionStorage.setItem("activePath","SchoolInfo");
             this.$message.success("欢迎"+this.loginForm.username+"，登录成功！");
-            await this.$router.push({path: "/ServiceBuy"});
+            await this.$router.push({path: "/SchoolInfo"});
           }
           if(res.flag != "ok"){
             this.$message.error("用户名或密码错误！");

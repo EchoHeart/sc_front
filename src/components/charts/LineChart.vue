@@ -21,7 +21,7 @@ export default {
         },
         height: {
             type: String,
-            default: '200px'
+            default: '320px'
         },
         autoResize: {
             type: Boolean,
@@ -39,10 +39,10 @@ export default {
     },
     watch: {
         chartData: {
-            deep: true,
-            handler (val) {
-                this.setOptions(val)
-            }
+            handler(val) {
+                this.setOptions(val);
+            },
+            deep: true
         }
     },
     mounted () {
@@ -62,10 +62,11 @@ export default {
             this.chart = echarts.init(this.$el, 'macarons')
             this.setOptions(this.chartData)
         },
-        setOptions ({ expectedData, actualData } = {}) {
+        // setOptions ({ expectedData, actualData } = {}) {
+        setOptions ({ actualData } = {}) {
             this.chart.setOption({
                 xAxis: {
-                    data: ['5/16', '5/17', '5/18', '5/19', '5/20', '5/21', '5/22'],
+                    data: ['5/21', '5/22', '5/23', '5/24', '5/25', '5/26', '5/27'],
                     boundaryGap: false,
                     axisTick: {
                         show: false
@@ -91,27 +92,29 @@ export default {
                     }
                 },
                 legend: {
-                    data: ['期望值', '实际值']
+                    // data: ['期望值', '实际值']
+                    data: ['均分变化']
                 },
-                series: [{
-                    name: '期望值',
-                    itemStyle: {
-                        normal: {
-                            color: '#FF005A',
-                            lineStyle: {
-                                color: '#FF005A',
-                                width: 2
-                            }
-                        }
-                    },
-                    smooth: true,
-                    type: 'line',
-                    data: expectedData,
-                    animationDuration: 2800,
-                    animationEasing: 'cubicInOut'
-                },
+                series: [
+                    // {
+                    // name: '期望值',
+                    // itemStyle: {
+                    //     normal: {
+                    //         color: '#FF005A',
+                    //         lineStyle: {
+                    //             color: '#FF005A',
+                    //             width: 2
+                    //         }
+                    //     }
+                    // },
+                    // smooth: true,
+                    // type: 'line',
+                    // data: expectedData,
+                    // animationDuration: 2800,
+                    // animationEasing: 'cubicInOut'
+                    // },
                     {
-                        name: '实际值',
+                        name: '均分变化',
                         smooth: true,
                         type: 'line',
                         itemStyle: {
@@ -130,7 +133,7 @@ export default {
                         animationDuration: 2800,
                         animationEasing: 'quadraticOut'
                     }]
-            })
+            }, true, false)
         }
     }
 }
