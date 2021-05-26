@@ -8,10 +8,22 @@ import './assets/iconfont/iconfont.css'
 //引入axios
 import axios from 'axios'
 
+//引入时间格式化moment
+//require 方式
+// require('moment/locale/zh-cn')
+// moment.locale('zh-cn');
+// //import 方式
+// import 'moment/locale/zh-cn'
+// moment.locale('zh-cn');
+//import 方式
+import moment from "moment";
+Vue.prototype.$moment = moment;
+
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 //挂载axios
 Vue.prototype.$http = axios
+
 
 //设置访问根路径
 //！！！！！！！酌情更改
